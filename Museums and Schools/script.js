@@ -1,6 +1,6 @@
 var map = L.map("map").setView([53.732562, -1.863383], 13);
 
-L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+var base = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 19,
   attribution:
     '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -113,12 +113,9 @@ var schoolClusters = L.markerClusterGroup();
 schoolClusters.addLayer(schoolLayer);
 map.addLayer(schoolClusters);
 
-var baseLayers = {
-  Museums: museumLayer,
-  Schools: schoolClusters,
+var baseMaps = {
+  Base: base,
 };
-
-L.control.layers(baseLayers).addTo(map);
 
 // Custom markers for schools.
 /*
@@ -149,3 +146,36 @@ function getSchoolMarker(feature, latlng) {
     return L.marker(latlng, {icon: schoolIcon});
 }
 */
+
+var overlayMaps = {
+  Schools: schoolClusters,
+  Museums: museumLayer,
+};
+
+L.control.layers(null, overlayMaps).addTo(map);
+
+var legend = L.control({ position: "bottomright" });
+
+legend.onAdd = function (map) {
+  var div = L.DomUtil.create("div", "legend");
+  div.innerHTML +=
+    '<div class="legend-item"><div class="museum"></div><span>Museum</span></div>';
+  div.innerHTML +=
+    '<div class="legend-item"><div class="primary-school"></div><span>Primary School</span></div>';
+  div.innerHTML +=
+    '<div class="legend-item"><div class="secondary-school"></div><span>Secondary School</span></div>';
+  div.innerHTML +=
+    '<div class="legend-item"><div class="other-school"></div><span>Other School</span></div>';
+
+  div.innerHTML +=
+    '<div class="legend-item"><div class="academy"></div><span>Academy</span></div>';
+  div.innerHTML +=
+    '<div class="legend-item"><div class="community"></div><span>Community</span></div>';
+  div.innerHTML +=
+    '<div class="legend-item"><div class="voluntary"></div><span>Voluntary</span></div>';
+  div.innerHTML +=
+    '<div class="legend-item"><div class="other-school-type"></div><span>Other School Type</span></div>';
+  return div;
+};
+
+legend.addTo(map);

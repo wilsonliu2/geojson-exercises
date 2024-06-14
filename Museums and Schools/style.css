@@ -5,3 +5,66 @@
   margin: 0;
   padding: 0;
 }
+
+.museum {
+  width: 20px;
+  height: 20px;
+  background-color: blue;
+}
+
+.primary-school {
+  width: 20px;
+  height: 20px;
+  background: red;
+}
+
+.secondary-school {
+  width: 20px;
+  height: 20px;
+  background: green;
+}
+
+.other-school {
+  width: 20px;
+  height: 20px;
+  background: purple;
+}
+
+.legend {
+  background-color: white;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  font-size: 14px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 5px;
+}
+
+.academy {
+  width: 20px;
+  height: 20px;
+  background-image: url(./icons/academy.svg);
+}
+
+.community {
+  width: 20px;
+  height: 20px;
+  background-image: url(./icons/community.svg);
+}
+
+.voluntary {
+  width: 20px;
+  height: 20px;
+  background-image: url(./icons/voluntary.svg);
+}
+
+.other-school-type {
+  width: 20px;
+  height: 20px;
+  background-image: url(./icons/default.svg);
+}
