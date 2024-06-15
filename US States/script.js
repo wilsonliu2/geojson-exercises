@@ -98,6 +98,7 @@ info.onAdd = function (map) {
   return this._div;
 };
 
+/*
 info.update = function (props) {
   this._div.innerHTML =
     "<h4>US Population Density and Household Data</h4>" +
@@ -202,10 +203,72 @@ info.update = function (props) {
         "%"
       : "Hover over a state");
 };
+*/
+
+var selectedHouseholdType = "Total households Overall";
+
+map.on("baselayerchange", function (e) {
+  if (houseHoldTypes.includes(e.name)) {
+    selectedHouseholdType = e.name;
+    info.update();
+  }
+});
+
+info.update = function (props) {
+  this._div.innerHTML =
+    "<h4>US Population Density and Household Data</h4>" +
+    (props
+      ? selectedHouseholdType != "Total households Overall"
+        ? "<b>" +
+          props.name +
+          "</b><br />" +
+          props.density +
+          " people / mi<sup>2</sup>" +
+          "<br><b>Households:</b>" +
+          "<br>" +
+          selectedHouseholdType +
+          ": " +
+          props[selectedHouseholdType].toLocaleString() +
+          "<br><b>Average Household Size:</b>" +
+          "<br>" +
+          selectedHouseholdType +
+          ": " +
+          props["Average Household Size - " + selectedHouseholdType] +
+          "<br><b>Households with one or more people under 18 years:</b>" +
+          "<br>" +
+          selectedHouseholdType +
+          ": " +
+          (
+            props[
+              "Households with one or more people under 18 years - " +
+                selectedHouseholdType
+            ] * 100
+          ).toFixed(1) +
+          "%" +
+          "<br><b>Households with one or more people 60 years and over:</b>" +
+          "<br>" +
+          selectedHouseholdType +
+          ": " +
+          (
+            props[
+              "Households with one or more people 60 years and over - " +
+                selectedHouseholdType
+            ] * 100
+          ).toFixed(1) +
+          "%"
+        : "<b>" +
+          props.name +
+          "</b><br />" +
+          props.density +
+          " people / mi<sup>2</sup>" +
+          "<br><b>Households:</b>" +
+          "<br>Total households Overall: " +
+          props["Total households Overall"].toLocaleString()
+      : "Hover over a state");
+};
 
 info.addTo(map);
 
-// Legend (density only)
 var legend = L.control({ position: "bottomright" });
 
 legend.onAdd = function (map) {
@@ -270,7 +333,7 @@ houseHoldTypes.forEach((type) => {
   });
 });
 
-L.control.layers(null, overlayMaps, { collapsed: false }).addTo(map);
+L.control.layers(overlayMaps, null, { collapsed: false }).addTo(map);
 
 // Color based on numeric value. Higher = darker, lower = lighter.
 function getHouseholdColor(type, value) {
