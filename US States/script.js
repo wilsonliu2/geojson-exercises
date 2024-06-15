@@ -85,10 +85,12 @@ function combineData(geoData, demoData) {
   return geoData;
 }
 
+/*
 geojson = L.geoJson(combineData(statesData, houseHoldData), {
   style: style,
   onEachFeature: onEachFeature,
 }).addTo(map);
+*/
 
 var info = L.control();
 
@@ -206,17 +208,17 @@ info.update = function (props) {
 */
 
 var selectedHouseholdType = "Total households Overall";
-
 map.on("baselayerchange", function (e) {
   if (houseHoldTypes.includes(e.name)) {
     selectedHouseholdType = e.name;
     info.update();
+    updateHouseholdLegend(selectedHouseholdType);
   }
 });
 
 info.update = function (props) {
   this._div.innerHTML =
-    "<h4>US Population Density and Household Data</h4>" +
+    "<h4>US Household Data</h4>" +
     (props
       ? selectedHouseholdType != "Total households Overall"
         ? "<b>" +
@@ -269,6 +271,7 @@ info.update = function (props) {
 
 info.addTo(map);
 
+/*
 var legend = L.control({ position: "bottomright" });
 
 legend.onAdd = function (map) {
@@ -289,6 +292,7 @@ legend.onAdd = function (map) {
 };
 
 legend.addTo(map);
+*/
 
 var overlayMaps = {};
 var houseHoldTypes = [
@@ -392,3 +396,79 @@ function getHouseholdColor(type, value) {
   }
   return colors[type][0];
 }
+
+// Household legend
+var householdLegend = L.control({ position: "bottomright" });
+
+function updateHouseholdLegend(type) {
+  householdLegend.onAdd = function (map) {
+    var div = L.DomUtil.create("div", "info legend"),
+      householdTypes = {
+        "Female householder": [
+          "#FED976",
+          "#FEB24C",
+          "#FD8D3C",
+          "#FC4E2A",
+          "#E31A1C",
+          "#BD0026",
+          "#800026",
+        ],
+        "Male householder": [
+          "#CFE3F6",
+          "#A8CCF0",
+          "#7CB3E8",
+          "#5496E0",
+          "#3078D9",
+          "#0858C9",
+          "#0541A1",
+        ],
+        "Married-couple family household": [
+          "#C7F3C7",
+          "#A3EBA3",
+          "#79E079",
+          "#53D453",
+          "#31C431",
+          "#1A8F1A",
+          "#116611",
+        ],
+        "Nonfamily household": [
+          "#FFE7CC",
+          "#FFD8B2",
+          "#FFC499",
+          "#FFAC7F",
+          "#FF9166",
+          "#FF6D4D",
+          "#FF4626",
+        ],
+        "Total households Overall": [
+          "#EFD2ED",
+          "#E6BCE5",
+          "#DCA5DE",
+          "#D08CD6",
+          "#C374CF",
+          "#B45AC7",
+          "#A542BF",
+        ],
+      },
+      thresholds = [0, 100000, 500000, 1000000, 2000000, 5000000, 10000000];
+
+    div.innerHTML += "<p class='text'>" + type + "</p>";
+    for (var i = 0; i < householdTypes[type].length; i++) {
+      div.innerHTML +=
+        '<i style="background:' +
+        householdTypes[type][i] +
+        '"></i> ' +
+        thresholds[i] +
+        (thresholds[i + 1] ? " - " + thresholds[i + 1] + "<br>" : "+") +
+        "<br>";
+    }
+
+    return div;
+  };
+
+  householdLegend.addTo(map);
+}
+
+updateHouseholdLegend(selectedHouseholdType);
+
+overlayMaps["Total households Overall"].addTo(map);
